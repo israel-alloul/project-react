@@ -1,38 +1,464 @@
-.App {
+/* סגנון כללי */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2 {
   text-align: center;
+  color: #333;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* קישור */
+a {
+  text-decoration: none;
+  color: #007bff;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+a:hover {
+  text-decoration: underline;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* סגנון כפתורים */
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Dashboard עיצוב */
+.dashboard-container {
+ 
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+.dashboard-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Login עיצוב */
+.login-container {
+  width: 300px;
+  margin: 100px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #fff;
+}
+
+.login-container h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.login-form {
   display: flex;
   flex-direction: column;
+}
+
+.login-form input {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.login-form button {
+  margin-top: 10px;
+}
+
+.login-error {
+  color: red;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+/* Todos עיצוב */
+.todos-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.todos-list {
+  list-style: none;
+  padding: 0;
+}
+
+.todos-list li {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.todos-list li input[type="checkbox"] {
+  margin-left: 10px;
+}
+
+.todos-list li button {
+  margin-left: 10px;
+}
+
+/* Album עיצוב */
+.album-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.album-list {
+  list-style: none;
+  padding: 0;
+}
+
+.album-list li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.album-list li a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.album-list li a:hover {
+  text-decoration: underline;
+}
+
+/* Photos עיצוב */
+.photos-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.photos-list {
+  list-style: none;
+  padding: 0;
+}
+
+.photos-list li {
+  margin-bottom: 20px;
+}
+
+.photos-list li img {
+  width: 100px;
+  height: 100px;
+  border-radius: 5px;
+}
+
+/* עיצוב כולל */
+.post-container {
+  width: 80%;
+  margin: 0 auto;
+  border: 2px solid #ddd;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+}
+
+/* שדה חיפוש */
+.search-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* הוספת פוסט חדש */
+.new-post {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.new-post-title, .new-post-body {
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.add-post-button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* רשימת הפוסטים */
+.posts-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.post-item {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  text-align: right;
+}
+
+.post-item .view-post {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.post-item .buttons {
+  display: flex;
+  flex-direction: column; /* כפתורים אחד מתחת לשני */
+  gap: 10px;
+  align-items: flex-end; /* הכפתורים יהיו מיושרים שמאלה */
+}
+
+
+button {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-button {
+  background-color: #f0ad4e;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.delete-button {
+  background-color: #d9534f;
+  color: white;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.toggle-content-button {
+  background-color: #5bc0de;
+  color: white;
 }
+
+.show-comments-button {
+  background-color: #5bc0de;
+  color: white;
+}
+
+.comments-section {
+  background-color: #f7f7f7;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.new-comment-input {
+  margin-top: 10px;
+}
+
+.add-comment-button {
+  margin-top: 5px;
+  background-color: #5cb85c;
+  color: white;
+}
+
+.add-post-button {
+  background-color: #5cb85c;
+  color: white;
+  margin-left: 10px;
+}
+
+.new-post {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* כפתור לדשבורד */
+.dashboard-button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+/* app.css */
+
+.todos-container {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f4f4f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  font-size: 2em;
+  color: #333;
+}
+
+button {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+input[type="text"] {
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  margin-right: 10px;
+  font-size: 1em;
+  width: 70%;
+}
+
+.todos-list {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.todos-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 1.1em;
+}
+
+.todos-list li div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%; /* התאמת הרוחב של כל שורה */
+}
+
+.todos-list li span {
+  flex-basis: 10%; /* שמירת מקום קבוע ל-ID */
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.todos-list li .todo-title {
+  flex-basis: 50%; /* מקום קבוע לכותרת */
+  margin-right: 20px;
+  white-space: nowrap; /* שמירה על שורה אחת בלבד */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.todos-list input[type="checkbox"] {
+  margin-right: 15px;
+}
+
+.todos-list input[type="text"] {
+  flex-basis: 50%; /* רוחב מוגדר לאזור עריכה */
+  padding: 5px;
+  font-size: 1em;
+}
+
+select {
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  font-size: 1em;
+  margin-left: 10px;
+}
+
+.todos-list .action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.todos-list .action-buttons button {
+  background-color: #e74c3c;
+  padding: 5px 10px;
+}
+
+.todos-list .action-buttons button:hover {
+  background-color: #c0392b;
+}
+
+.todos-container div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.todos-container div input[type="text"] {
+  width: 80%;
+}
+
+
+
+/* const styles = {
+  container: {
+    width: "300px",
+    margin: "100px auto",
+    padding: "20px",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+    textAlign: "center",
+    backgroundColor: "#f9f9f9",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  input: {
+    margin: "10px 0",
+    padding: "8px",
+    borderRadius: "4px",
+    border: "1px solid #ccc",
+  },
+  button: {
+    padding: "10px",
+    backgroundColor: "#007bff",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+  },
+  error: {
+    color: "red",
+    fontSize: "12px",
+    margin: "10px 0",
+  },
+}; */
