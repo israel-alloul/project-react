@@ -120,6 +120,7 @@ export default function Post({userId}) {
         onChange={handleSearch}
         className="search-input"
       />
+      {/* nhtrh */}
   
       {/* הוספת פוסט חדש */}
       <div className="new-post">
