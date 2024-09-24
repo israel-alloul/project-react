@@ -43,10 +43,15 @@ const Login = ({setUser}) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/users")
+    fetch("http://localhost:3000/api/users")
       .then((res) => res.json())
-      .then((data) => setUsers(data));
+      .then((data) => {
+        console.log("Fetched users:", data); // בדיקה האם הנתונים מגיעים
+        setUsers(data);
+      })
+      .catch((error) => console.error("Error fetching users:", error));
   }, []);
+  
 
   // ניהול state עבור username, password ושגיאה
   const [username, setUsername] = useState("");

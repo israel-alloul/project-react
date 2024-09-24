@@ -18,7 +18,6 @@ function App() {
 const location = useLocation();
 
 const [user,setUser] = useState(null);
-console.log(user);
 
   return (
     <div className="App">
