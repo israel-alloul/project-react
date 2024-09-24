@@ -7,7 +7,7 @@ export default function Album({userId}) {
     const [album, setAlbum] = useState(null);
     
   const fetchAlbum = async () => {
-    const response = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}/albums`);
+    const response = await fetch(`http://localhost:3000/api/users/${userId}/albums`);
     const data = await response.json();
     setAlbum(data);
   };

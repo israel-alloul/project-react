@@ -12,7 +12,7 @@ export default function Todos({userId}) {
 
   // הבאת רשימת todos מהשרת
   const fetchTodos = async () => {
-    const response = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}/todos`);
+    const response = await fetch(`http://localhost:3000/api/users/${userId}/todos`); 
     const data = await response.json();
    
     setTodos(data);

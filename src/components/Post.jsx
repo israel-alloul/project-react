@@ -17,7 +17,7 @@ export default function Post({userId}) {
 
   // הבאת posts מהשרת
   const fetchPosts = async () => {
-    const response = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}/posts`);
+    const response = await fetch(`http://localhost:3000/api/users/${userId}/posts`);
     const data = await response.json();
     setPosts(data); // הצגת Posts של משתמש 1 בלבד
   };
