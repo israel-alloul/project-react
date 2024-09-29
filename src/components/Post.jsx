@@ -52,25 +52,72 @@ export default function Post({userId}) {
     setComments([...comments, newCommentObj]);
     setNewComment(""); // איפוס שדה התגובה
   };
+/********************************************************** */
 
-  // הוספת פוסט חדש
-  const handleAddPost = () => {
-    const newPost = {
-      id: posts.length + 1,
-      title: newPostTitle,
-      body: newPostBody,
-      userId: 1,
-    };
-    setPosts([newPost, ...posts]); // הוספה לראש הרשימה
-    setNewPostTitle(""); // איפוס שדות הוספת הפוסט
+  const handleAddPost = async () => {
+    if (!newPostTitle || !newPostBody) {
+      alert("Please enter both title and body");
+      return;
+    }       
+  
+    const response = await fetch(`http://localhost:3000/api/users/posts/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userId,
+        title: newPostTitle,
+        body: newPostBody,
+      }),
+    });
+  
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error adding post:", errorData);
+      return;
+    }
+  
+    const newPost = await response.json();
+    setPosts([newPost,...posts ]);
+    setNewPostTitle("");
     setNewPostBody("");
-  };
+  };   
+/********************************************************** */
 
-  // מחיקת פוסט
-  const handleDeletePost = (postId) => {
+const handleDeletePost = async (postId) => {
+ 
+  console.log("Deleting post with ID:", postId);
+  
+  try {
+    const response = await fetch(`http://localhost:3000/api/users/posts/delete/${postId}`, {
+      method: 'DELETE',
+    });
+
+    console.log("Response status:", response.status);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error deleting post:', errorData);
+      return;
+    }
+
+    // כאן אנו מעדכנים את הסטייט של הפוסטים לאחר שהפוסט נמחק בהצלחה
     const updatedPosts = posts.filter((post) => post.id !== postId);
-    setPosts(updatedPosts); // עדכון רשימת הפוסטים אחרי המחיקה
-  };
+    setPosts(updatedPosts); 
+    setSelectedPost(null);
+    setShowContent(false);  
+    setShowComments(false);
+
+    console.log("Post deleted successfully");
+
+  } catch (error) {
+    console.error("Error during delete request:", error);
+  }
+};
+
+
+
 
   // חיפוש פוסט לפי כותרת או מספר סידורי
   const handleSearch = (e) => {
@@ -84,7 +131,7 @@ export default function Post({userId}) {
     setEditedBody(post.body);
   };
 
-  // שמירת העריכה
+  // // שמירת העריכה
   const handleSaveEdit = (postId) => {
     const updatedPosts = posts.map((post) =>
       post.id === postId ? { ...post, title: editedTitle, body: editedBody } : post
@@ -97,6 +144,8 @@ export default function Post({userId}) {
   const handleCancelEdit = () => {
     setEditingPost(null); // יציאה ממצב עריכה
   };
+
+
 
   const filteredPosts = posts.filter(
     (post) =>

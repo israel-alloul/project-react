@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-export default function Todos({userId}) {
+export default function Todos({ userId }) {
   const [todos, setTodos] = useState([]);
   const [filteredTodos, setFilteredTodos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -12,29 +12,31 @@ export default function Todos({userId}) {
 
   // הבאת רשימת todos מהשרת
   const fetchTodos = async () => {
-    const response = await fetch(`http://localhost:3000/api/users/${userId}/todos`); 
+    const response = await fetch(
+      `http://localhost:3000/api/users/${userId}/todos`
+    );
     const data = await response.json();
-   
+
     setTodos(data);
     setFilteredTodos(data);
   };
 
   useEffect(() => {
     fetchTodos();
-  }, []);
+  }, [todos]);
 
- // סינון לפי קריטריון חיפוש
-const handleSearch = (e) => {
+  // סינון לפי קריטריון חיפוש
+  const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
-  
+
     setFilteredTodos(
       todos.filter((item) => {
         // אם החיפוש הוא מספרי, חפש לפי התאמה מלאה ל-id
         if (!isNaN(term) && term !== "") {
           return item.id.toString() === term;
         }
-  
+
         // חיפוש לפי כותרת או מצב השלמה
         return (
           item.title.toLowerCase().includes(term) ||
@@ -43,7 +45,6 @@ const handleSearch = (e) => {
       })
     );
   };
-  
 
   // סידור לפי קריטריון שנבחר
   const handleSort = (e) => {
@@ -65,17 +66,27 @@ const handleSearch = (e) => {
   };
 
   // הוספת משימה חדשה
-  const handleAddTodo = () => {
-    const newTodo = {
-      id: todos.length + 1,
-      title: newTodoTitle,
-      completed: false,
-      userId: 1,
-    };
-    const updatedTodos = [newTodo, ...todos]; // מוסיפים את המשימה לראש הרשימה
-    setTodos(updatedTodos);
-    setFilteredTodos(updatedTodos);
-    setNewTodoTitle("");
+  const handleAddTodo = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/users/todos/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: userId, title: newTodoTitle, completed: false }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      // עדכון ה־todos עם המשימה החדשה מהשרת
+      setTodos([...todos, data]);
+
+      setNewTodoTitle(""); // איפוס שדה הטקסט לאחר ההוספה
+
+    } catch (error) {
+      console.error("Error adding todo:", error);
+    }
   };
 
   // שינוי מצב ביצוע
@@ -88,10 +99,28 @@ const handleSearch = (e) => {
   };
 
   // מחיקת משימה
-  const handleDeleteTodo = (id) => {
-    const updatedTodos = todos.filter((item) => item.id !== id);
-    setTodos(updatedTodos);
-    setFilteredTodos(updatedTodos);
+  const handleDeleteTodo = async (id) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/users/todos/delete/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error deleting todo:", errorData);
+        return;
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+      setTodos(todos.filter((item) => item.id !== id));
+      setFilteredTodos(todos.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Network error:", error);
+    }
   };
 
   // התחלת עריכת משימה
@@ -100,15 +129,34 @@ const handleSearch = (e) => {
     setEditedTitle(title);
   };
 
-  // שמירת עריכה
-  const handleSaveEdit = (id) => {
-    const updatedTodos = todos.map((item) =>
-      item.id === id ? { ...item, title: editedTitle } : item
-    );
-    setTodos(updatedTodos);
-    setFilteredTodos(updatedTodos);
-    setEditTodoId(null);
-    setEditedTitle("");
+  // שמירת עריכה ועדכון בשרת
+  const handleSaveEdit = async (id) => {
+    try {
+      // שליחת בקשת PUT לשרת לצורך עדכון המשימה
+      const response = await fetch(`http://localhost:3000/api/users/todos/update/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: editedTitle, completed: todos.find((todo) => todo.id === id).completed }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error updating todo:", errorData);
+        return;
+      }
+
+      const updatedTodos = todos.map((item) =>
+        item.id === id ? { ...item, title: editedTitle } : item
+      );
+      setTodos(updatedTodos);
+      setFilteredTodos(updatedTodos);
+      setEditTodoId(null);
+      setEditedTitle("");
+    } catch (error) {
+      console.error("Error saving edited todo:", error);
+    }
   };
 
   // ביטול עריכה
@@ -118,14 +166,12 @@ const handleSearch = (e) => {
   };
 
   return (
-    <div className="todos-container" >
+    <div className="todos-container">
       <h2>משימות</h2>
       <Link to="/dashboard/">
-          <button>Dashboard</button>
-        </Link>
-        <br>
-        
-        </br>
+        <button>Dashboard</button>
+      </Link>
+      <br></br>
       {/* שדה חיפוש */}
       <input
         type="text"
@@ -156,10 +202,9 @@ const handleSearch = (e) => {
 
       {/* הצגת רשימת המשימות */}
       <ul className="todos-list">
-        {filteredTodos.map((item, index) => (
+        {filteredTodos.map((item) => (
           <li key={item.id}>
-           
-            <span>{item.id}. </span> 
+            <span>{item.id}. </span>
             {editTodoId === item.id ? (
               <>
                 <input
@@ -190,3 +235,11 @@ const handleSearch = (e) => {
     </div>
   );
 }
+/****************************************
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * ***************************** */
