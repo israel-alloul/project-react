@@ -23,7 +23,7 @@ export default function Todos({ userId }) {
 
   useEffect(() => {
     fetchTodos();
-  }, [todos]);
+  }, [userId]);
 
   // סינון לפי קריטריון חיפוש
   const handleSearch = (e) => {
