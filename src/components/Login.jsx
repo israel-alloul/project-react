@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import { useNavigate } from "react-router-dom";
 
 // עיצוב מינימלי
@@ -38,7 +37,7 @@ const styles = {
   },
 };
 
-const Login = ({setUser}) => {
+const Login = ({ setUser }) => {
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
@@ -46,39 +45,45 @@ const Login = ({setUser}) => {
     fetch("http://localhost:3000/api/users")
       .then((res) => res.json())
       .then((data) => {
-        console.log("Fetched users:", data); // בדיקה האם הנתונים מגיעים
+        console.log("Fetched users:", data); // בדיקה אם הנתונים מגיעים
         setUsers(data);
       })
       .catch((error) => console.error("Error fetching users:", error));
   }, []);
-  
 
   // ניהול state עבור username, password ושגיאה
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  
+
   // פונקציית כניסה שמבצעת בדיקות אם המשתמש מורשה
   const handleLogin = (e) => {
     e.preventDefault(); // מניעת רענון הדף בעת שליחת הטופס
 
-    for (let i = 0; i < users.length; i++) {
-      if (users[i].username === username && users[i].website === password) {
-        // אם המשתמש מורשה
-        setError(""); // איפוס הודעת השגיאה
-        setUser(users[i])
-        alert("התחברת בהצלחה!");
-        // שמירת הנתונים ב-Local Storage לדוגמה
-        localStorage.setItem("loggedInUser", JSON.stringify(users[i]));
-        
-        // ניתוב לעמוד אחר במקרה של הצלחה
-        navigate("/dashboard");
-      }
+    const user = users.find(
+      (user) => user.username === username && user.website === password
+    );
+
+    if (user) {
+      // אם המשתמש נמצא
+      setError(""); // איפוס הודעת השגיאה
+      setUser(user); // שמירת המשתמש בסטייט
+      alert("התחברת בהצלחה!");
+
+      // שמירת הנתונים ב-Local Storage
+      localStorage.setItem(
+        "loggedInUser",
+        JSON.stringify({ username: user.username, email: user.email })
+      );
+
+      // ניתוב לעמוד אחר במקרה של הצלחה
+      navigate("/dashboard");
+    } else {
+      // אם הכניסה נכשלה
+      setError("שם משתמש או סיסמה שגויים");
+      setUsername("");
+      setPassword("");
     }
-    // אם הכניסה נכשלה
-    setError("שם משתמש או סיסמה שגויים");
-    setUsername("");
-    setPassword("");
   };
 
   return (
@@ -97,7 +102,7 @@ const Login = ({setUser}) => {
         </div>
         <div>
           <label>סיסמה:</label>
-          <br></br>
+          <br />
           <input
             type="password"
             value={password}
@@ -113,7 +118,6 @@ const Login = ({setUser}) => {
       </form>
     </div>
   );
-  
 };
 
 export default Login;

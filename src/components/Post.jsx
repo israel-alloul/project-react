@@ -32,26 +32,69 @@ export default function Post({userId}) {
     setShowContent(!showContent);
   };
 
-  // פונקציה להורדת התגובות של הפוסט שנבחר
-  const fetchComments = async (postId) => {
+  // פונקציה להצגת התגובות של הפוסט שנבחר
+const fetchComments = async (postId) => {
+  if (!showComments) {
+    // אם התגובות מוסתרות, נביא אותן ונציג
     const response = await fetch(
-      `https://jsonplaceholder.typicode.com/posts/${postId}/comments`
+      `http://localhost:3000/api/posts/${postId}/comments`
     );
-    const data = await response.json();
-    setComments(data);
-    setShowComments(true);
-  };
+    if (response.ok) {
+      const data = await response.json();
+      setComments(data);
+      setShowComments(true);
+    } else {
+      console.error("Error fetching comments:", response.statusText);
+    }
+  } else {
+    // אם התגובות מוצגות, נסגור אותן
+    setShowComments(false);
+  }
+};
 
-  // פונקציה להוספת תגובה חדשה
-  const handleAddComment = () => {
-    const newCommentObj = {
-      postId: selectedPost.id,
-      body: newComment,
-      id: comments.length + 1,
-    };
+// פונקציה להוספת תגובה חדשה
+const handleAddComment = async () => {
+  if (!newComment) {
+    alert("Please enter a comment");
+    return;
+  }
+
+  // שליפת פרטי המשתמש המחובר מ-LocalStorage
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userName = user?.username || "Anonymous"; // ברירת מחדל במקרה שאין שם משתמש
+  const userEmail = user?.email || "no-email@example.com"; // ברירת מחדל במקרה שאין מייל
+
+  try {
+    const response = await fetch(`http://localhost:3000/api/users/posts/comments/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        postId: selectedPost.id, // מזהה הפוסט שאליו שייכת התגובה
+        email: userEmail, // אימייל מהמשתמש המחובר
+        name: userName, // שם המשתמש המחובר
+        body: newComment, // התוכן של התגובה החדשה
+      }),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error adding comment:", errorData);
+      return;
+    }
+    
+    const newCommentObj = await response.json();
+    
+    // עדכון סטייט התגובות עם התגובה החדשה כדי שתופיע מיד
     setComments([...comments, newCommentObj]);
+    
+    // איפוס שדה התגובה לאחר הוספה מוצלחת
     setNewComment("");
-  };
+  } catch (error) {
+    console.error("Error adding comment:", error);
+  }
+};
+
 
   // פונקציה להוספת פוסט חדש
   const handleAddPost = async () => {

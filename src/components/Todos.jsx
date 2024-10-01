@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Todos({ userId }) {
   const [todos, setTodos] = useState([]);
+  
   const [filteredTodos, setFilteredTodos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortCriteria, setSortCriteria] = useState("default");
@@ -65,29 +66,49 @@ export default function Todos({ userId }) {
     setFilteredTodos(sortedTodos); // עדכון הרשימה המסוננת
   };
 
-  // הוספת משימה חדשה
   const handleAddTodo = async () => {
+    if (!newTodoTitle) {
+      alert("Please enter a title for the todo");
+      return;
+    }
+  
     try {
       const response = await fetch(`http://localhost:3000/api/users/todos/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId: userId, title: newTodoTitle, completed: false }),
+        body: JSON.stringify({
+          userId: userId,
+          title: newTodoTitle,
+          completed: false,
+        }),
       });
-
-      const data = await response.json();
-      console.log(data);
-
-      // עדכון ה־todos עם המשימה החדשה מהשרת
-      setTodos([...todos, data]);
-
-      setNewTodoTitle(""); // איפוס שדה הטקסט לאחר ההוספה
-
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error adding todo:", errorData);
+        return;
+      }
+  
+      const newTodo = await response.json();
+      console.log("New todo added:", newTodo);
+      
+  
+      // עדכון הסטייט עם המשימה החדשה
+      setTodos((prevTodos) => {
+        const updatedTodos = [...prevTodos, newTodo];
+        setFilteredTodos(updatedTodos); // עדכון הרשימה המסוננת גם כן
+        return updatedTodos;
+      });  
+      // איפוס שדה הטקסט
+      setNewTodoTitle("");
+  
     } catch (error) {
       console.error("Error adding todo:", error);
     }
   };
+  
 
   // שינוי מצב ביצוע
   const toggleCompleted = (id) => {
